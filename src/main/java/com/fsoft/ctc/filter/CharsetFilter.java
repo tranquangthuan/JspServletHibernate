@@ -9,6 +9,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
+import javax.servlet.http.HttpServletRequest;
 
 @WebFilter(value = "/*", filterName = "CharsetFilter")
 public class CharsetFilter implements Filter {
@@ -28,9 +29,14 @@ public class CharsetFilter implements Filter {
 			request.setCharacterEncoding(encoding);
 		}
 
-		// Set the default response content type and encoding
-		response.setContentType("text/html; charset=UTF-8");
-		response.setCharacterEncoding("UTF-8");
+		HttpServletRequest httpRequest = (HttpServletRequest) request;
+		String requestURI = httpRequest.getRequestURI();
+
+		if (!requestURI.endsWith(".css")) {
+			// Set the default response content type and encoding
+			response.setContentType("text/html; charset=UTF-8");
+			response.setCharacterEncoding("UTF-8");
+		}
 
 		next.doFilter(request, response);
 	}
